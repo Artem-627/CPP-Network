@@ -1,19 +1,43 @@
-﻿// CPP-Network.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include <iostream>
+#include "Model.h"
 
-#include <iostream>
-int main()
-{
-    std::cout << "Hello World!\n";
+using namespace std;
+
+int main() {
+	//srand(time(NULL));
+	Model model(3);
+
+	//model.Add(2);
+	model.Add(1);
+
+	model.ShowModel();
+
+	vector<double> input;
+	input.push_back(1);
+	input.push_back(2);
+	input.push_back(1.6);
+	//vector<double> predict = model.predict(input);
+
+
+	//model.ShowModel();
+
+	//for (int i = 0; i < predict.size(); i++)
+	//	cout << " " << i << ":  " << predict[i] << endl;
+
+	vector<double> target;
+	target.push_back(0.7);
+	double learning_rate = 0.1;
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+
+
+	return 0;
 }
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
