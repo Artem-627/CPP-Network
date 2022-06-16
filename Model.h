@@ -145,7 +145,6 @@ public:
 					//cout << neurons[layer][neuron].weights[weight] << ";	";
 					neurons[layer][neuron].weights[weight] -= delta_weight;
 					//cout << neurons[layer][neuron].weights[weight] << ";	" << delta_weight << endl;
-					//cout << "  =>  " << neurons[layer][neuron].weights[weight] << endl << "-" << endl;
 				}
 			}
 		}
