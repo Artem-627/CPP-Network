@@ -127,31 +127,32 @@ public:
 
 	void learn(vector<double> task, vector<double> target, double learning_rate) {
 		vector<double> predict = this->predict(task);
-		if (predict.size() != target.size())	exit(1);
-		double MSE = 0;
+		if (predict.size() != target.size())  exit(1);
+		//double MSE = 0;
 		double error = 0;
 		for (int i = 0; i < predict.size(); i++) {
-			cout << "	" << predict[i] << "		" << target[i] << endl;
-			error += predict[i] - target[i];
+			//cout << "	" << predict[i] << "		" << target[i] << endl;
+			//error += predict[i] - target[i];
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
-			MSE += pow(predict[i] - target[i], 2);
+			cout << "neurons[" << neurons.size() - 1 << "][" << i << "].error = " << neurons[neurons.size() - 1][i].error << endl;
+			//MSE += pow(predict[i] - target[i], 2);
 		}
-		MSE /= predict.size();
-		cout << error << endl;
-		cout << MSE << endl;
-		cout << "---" << endl;
+		//MSE /= predict.size();
+		//cout << error << endl;
+		//cout << MSE << endl;
+		//cout << "---" << endl;
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
 				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
-					cout << "local_error = " << MSE << " * " << d_ReLU(neurons[layer][neuron].value) << endl;
 					//double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
-					double local_error = MSE * d_ReLU(neurons[layer][neuron].value);
+					double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
+					cout << "local_error = " << neurons[layer][neuron].error << " * " << d_ReLU(neurons[layer][neuron].value) << " = " << local_error << endl;
 					//neurons[layer][neuron].weights[weight] += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight] * neurons[layer][neuron].error * learning_rate;
 					//neurons[layer][neuron].weights[weight] += d_ReLU(neurons[layer][neuron].value) * neurons[layer][neuron].error * neurons[layer - 1][weight].value * learning_rate;
-					cout << "neurons[" << layer << "][" << neuron << "].error = " << local_error << endl;
-					cout << "neurons[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].weights[weight];
+					//cout << "neurons[" << layer << "][" << neuron << "].error = " << local_error << endl;
+					//cout << "neurons[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].weights[weight];
 					neurons[layer][neuron].weights[weight] -= local_error * neurons[layer - 1][weight].value * learning_rate;
-					cout << "  =>  " << neurons[layer][neuron].weights[weight] << endl << "-" << endl;
+					//cout << "  =>  " << neurons[layer][neuron].weights[weight] << endl << "-" << endl;
 				}
 			}
 		}

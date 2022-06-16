@@ -37,6 +37,10 @@ int main() {
 	model.learn(input, target, learning_rate);
 	model.learn(input, target, learning_rate);
 	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
+	model.learn(input, target, learning_rate);
 
 
 	return 0;
