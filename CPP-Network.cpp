@@ -8,9 +8,9 @@ int main() {
 	Model model(3);
 
 	//model.Add(2);
-	model.Add(1);
+	model.Add(3);
 
-	model.ShowModel();
+	//model.ShowModel();
 
 	vector<double> input;
 	input.push_back(1);
@@ -26,6 +26,7 @@ int main() {
 
 	vector<double> target;
 	target.push_back(0.7);
+	target.push_back(1.2);
 	double learning_rate = 0.1;
 	model.learn(input, target, learning_rate);
 	model.learn(input, target, learning_rate);
@@ -40,8 +41,6 @@ int main() {
 	model.learn(input, target, learning_rate);
 	model.learn(input, target, learning_rate);
 	model.learn(input, target, learning_rate);
-	model.learn(input, target, learning_rate);
-
 
 	return 0;
 }

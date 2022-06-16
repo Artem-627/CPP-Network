@@ -10,7 +10,7 @@ public:
 	double value = NULL;
 	double error;
 	Neuron(vector<double> weight) {
-		cout << "[Create neuron with size = " << weight.size() << endl;
+		cout << "[Neuron with size = " << weight.size() << " created]" << endl;
 		this->weights = weight;
 	}
 
@@ -47,20 +47,6 @@ public:
 	}
 
 	void Add(int quantity) {
-		/*vector<vector<double>> neuron_buffer;
-		vector<double> weights_buffer;
-		neuron_buffer.clear();
-		weights_buffer.clear();
-		for (int j = 0; j < quantity; j++) {
-			for (int k = 0; k < this -> neurons[this -> now_index - 1].size(); k++) {
-				weights_buffer.push_back(random());
-			}
-			neuron_buffer.push_back(weights_buffer);
-			weights_buffer.clear();
-		}
-		neurons.push_back(neuron_buffer);
-		now_index++;*/
-
 		vector<Neuron> neurons_buffer;	neurons_buffer.clear();
 		vector<double> weights_buffer;	weights_buffer.clear();
 		for (int i = 0; i < quantity; i++) {
@@ -129,11 +115,12 @@ public:
 		vector<double> predict = this->predict(task);
 		if (predict.size() != target.size())  exit(1);
 		//double MSE = 0;
-		double error = 0;
+		//double error = 0;
 		for (int i = 0; i < predict.size(); i++) {
 			//cout << "	" << predict[i] << "		" << target[i] << endl;
-			//error += predict[i] - target[i];
-			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
+			double error = predict[i] - target[i];
+			neurons[neurons.size() - 1][i].error = error == 0 ? 0 : pow(error, 2) * error / abs(error);
+			//neurons[neurons.size() - 1][i].error = predict[i] - target[i];
 			cout << "neurons[" << neurons.size() - 1 << "][" << i << "].error = " << neurons[neurons.size() - 1][i].error << endl;
 			//MSE += pow(predict[i] - target[i], 2);
 		}
@@ -152,9 +139,9 @@ public:
 					//cout << "neurons[" << layer << "][" << neuron << "].error = " << local_error << endl;
 					//cout << "neurons[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].weights[weight];
 					double delta_weight = local_error * neurons[layer - 1][weight].value * learning_rate;
-					cout << neurons[layer][neuron].weights[weight] << ";	";
+					//cout << neurons[layer][neuron].weights[weight] << ";	";
 					neurons[layer][neuron].weights[weight] -= delta_weight;
-					cout << neurons[layer][neuron].weights[weight] << ";	" << delta_weight << endl;
+					//cout << neurons[layer][neuron].weights[weight] << ";	" << delta_weight << endl;
 					//cout << "  =>  " << neurons[layer][neuron].weights[weight] << endl << "-" << endl;
 				}
 			}
