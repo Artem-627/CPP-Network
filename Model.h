@@ -9,6 +9,7 @@ public:
 	vector<double> weights;
 	double value = NULL;
 	double error;
+
 	Neuron(vector<double> weight) {
 		cout << "[Neuron with size = " << weight.size() << " created]" << endl;
 		this->weights = weight;
@@ -23,6 +24,7 @@ class Model {
 public:
 	vector<vector<Neuron>> neurons;
 	int now_index = 1;
+
 	Model(int input_quantity) {
 		cout << "[Create model...]" << endl;
 		vector<Neuron> neuron_buffer; neuron_buffer.clear();
@@ -37,6 +39,7 @@ public:
 		//return x;
 		//return 1 / (1 + exp(-x));
 	}
+	
 	double d_ReLU(double x) {
 		return 1;
 		//return ReLU(x) * (1 - ReLU(x));
