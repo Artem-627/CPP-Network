@@ -16,7 +16,7 @@ public:
 	}
 
 	void clear() {
-		double value = NULL;
+		this->value = 0;
 	}
 };
 
@@ -35,14 +35,14 @@ public:
 	}
 
 	double ReLU(double x) {
-		return x > 0 ? x : 0;
+		//return x > 0 ? x : 0;
 		//return x;
-		//return 1 / (1 + exp(-x));
+		return 1 / (1 + exp(-x));
 	}
 	
 	double d_ReLU(double x) {
-		return 1;
-		//return ReLU(x) * (1 - ReLU(x));
+		//return 1;
+		return ReLU(x) * (1 - ReLU(x));
 	}
 
 	double random(double min = 0, double max = 1) {
@@ -95,10 +95,13 @@ public:
 
 	vector<double> predict(vector<double> inputs) {
 		vector<double> predict;	predict.clear();
-		ClearModel();
+		//ClearModel();
+		//cout << "Cleared model: " << endl << endl;
+		//this->ShowModel();
+		//cout << endl << endl;
 		for (int input = 0; input < neurons[0].size(); input++) {
 			neurons[0][input].value = inputs[input];
-			cout << "neurons[0][input].value = inputs[input] = ";
+			//cout << "neurons[0][input].value = inputs[input] = ";
 		}
 		//this->ShowModel();
 		for (int layer = 1; layer < neurons.size(); layer++) {
@@ -118,16 +121,18 @@ public:
 	void learn(vector<double> task, vector<double> target, double learning_rate) {
 		cout << endl;
 		vector<double> predict = this->predict(task);
+		//this->ShowModel();
+		//this->ShowNeurons();
 		if (predict.size() != target.size())  exit(1);
 		//double MSE = 0;
 		//double error = 0;
 		for (int i = 0; i < predict.size(); i++) {
 			//cout << "	" << predict[i] << "		" << target[i] << endl;
-			double error = predict[i] - target[i];
 			//neurons[neurons.size() - 1][i].error = error == 0 ? 0 : pow(error, 2) * error / abs(error);
-			neurons[neurons.size() - 1][i].error = error;
+			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
+			cout << predict[i] << ";  " << target[i] << endl;
 			//neurons[neurons.size() - 1][i].error = predict[i] - target[i];
-			cout << "neurons[" << neurons.size() - 1 << "][" << i << "].error = " << neurons[neurons.size() - 1][i].error << endl;
+			//cout << "neurons[" << neurons.size() - 1 << "][" << i << "].error = " << neurons[neurons.size() - 1][i].error << endl;
 			//MSE += pow(predict[i] - target[i], 2);
 		}
 		//MSE /= predict.size();
@@ -136,8 +141,8 @@ public:
 		//cout << "---" << endl;
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
-				double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
+					double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 					//double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 					//cout << "local_error = " << neurons[layer][neuron].error << " * " << d_ReLU(neurons[layer][neuron].value) << " = " << local_error << endl;
 					//neurons[layer][neuron].weights[weight] += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight] * neurons[layer][neuron].error * learning_rate;
@@ -151,5 +156,6 @@ public:
 				}
 			}
 		}
+		//cout << "----------" << endl;
 	}
 };
