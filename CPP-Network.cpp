@@ -8,7 +8,7 @@ int main() {
 	Model model(3);
 
 	//model.Add(2);
-	model.Add(1);
+	model.Add(2);
 
 	//model.ShowModel();
 
@@ -26,6 +26,7 @@ int main() {
 
 	vector<double> target;
 	target.push_back(0.7);
+	target.push_back(1.2);
 	double learning_rate = 0.1;
 
 	for (int i = 0; i < 15; i ++)
