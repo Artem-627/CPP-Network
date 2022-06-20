@@ -8,8 +8,12 @@ int main() {
 	Model model(2);
 
 
-	//model.Add(2);
-	model.Add(1);
+	//model.Add(5);
+	model.Add(2);
+
+	cout << model.d_ReLU(0.5) << endl;
+	cout << model.d_ReLU(1) << endl;
+
 
 
 	vector<double> input;
@@ -29,12 +33,17 @@ int main() {
 	//	cout << " " << i << ":  " << predict[i] << endl;
 
 	vector<double> target;
-	target.push_back(1);
-	//target.push_back(1.2);
+	target.push_back(0.5);
+	target.push_back(0.08);
 	double learning_rate = 0.1;
 
-	for (int i = 0; i < 15; i ++)
+	for (int i = 0; i < 100; i ++)
 		model.learn(input, target, learning_rate);
 
 	return 0;
 }
+
+
+
+//тип работы : "дети", "государственный", "никогда не работал", "частный" или "самозанятый"
+				//0		   1						 2						   3					4

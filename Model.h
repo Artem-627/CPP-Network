@@ -7,7 +7,7 @@ using namespace std;
 class Neuron {
 public:
 	vector<double> weights;
-	double value = NULL;
+	double value = 0;
 	double error;
 
 	Neuron(vector<double> weight) {
@@ -35,14 +35,15 @@ public:
 	}
 
 	double ReLU(double x) {
-		//return x > 0 ? x : 0;
+		return x > 0 ? x : 0;
 		//return x;
-		return 1 / (1 + exp(-x));
+		//return 1 / (1 + exp(-x));
 	}
 	
 	double d_ReLU(double x) {
-		//return 1;
-		return ReLU(x) * (1 - ReLU(x));
+		return 1;
+		//return ReLU(x) * (1 - ReLU(x)) == 0 ? ReLU(x) * (1 - ReLU(x)) : 1;
+		//return ReLU(x) * (1 - ReLU(x));
 	}
 
 	double random(double min = 0, double max = 1) {
@@ -95,7 +96,7 @@ public:
 
 	vector<double> predict(vector<double> inputs) {
 		vector<double> predict;	predict.clear();
-		//ClearModel();
+		ClearModel();
 		//cout << "Cleared model: " << endl << endl;
 		//this->ShowModel();
 		//cout << endl << endl;
@@ -130,9 +131,10 @@ public:
 			//cout << "	" << predict[i] << "		" << target[i] << endl;
 			//neurons[neurons.size() - 1][i].error = error == 0 ? 0 : pow(error, 2) * error / abs(error);
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
+			//neurons[neurons.size() - 1][i].error = target[i] - predict[i];
 			cout << predict[i] << ";  " << target[i] << endl;
 			//neurons[neurons.size() - 1][i].error = predict[i] - target[i];
-			//cout << "neurons[" << neurons.size() - 1 << "][" << i << "].error = " << neurons[neurons.size() - 1][i].error << endl;
+			cout << "neurons[" << neurons.size() - 1 << "][" << i << "].error = " << neurons[neurons.size() - 1][i].error << endl;
 			//MSE += pow(predict[i] - target[i], 2);
 		}
 		//MSE /= predict.size();
@@ -141,8 +143,9 @@ public:
 		//cout << "---" << endl;
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
+				double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
+				//cout << "	local error = " << local_error << " (" << neurons[layer][neuron].value << ")" << endl;
 				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
-					double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 					//double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 					//cout << "local_error = " << neurons[layer][neuron].error << " * " << d_ReLU(neurons[layer][neuron].value) << " = " << local_error << endl;
 					//neurons[layer][neuron].weights[weight] += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight] * neurons[layer][neuron].error * learning_rate;
