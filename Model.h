@@ -35,15 +35,15 @@ public:
 	}
 
 	double ReLU(double x) {
-		return x > 0 ? x : 0;
+		//return x > 0 ? x : 0;
 		//return x;
-		//return 1 / (1 + exp(-x));
+		return 1 / (1 + exp(-x));
 	}
 	
 	double d_ReLU(double x) {
-		return 1;
+		//return 1;
 		//return ReLU(x) * (1 - ReLU(x)) == 0 ? ReLU(x) * (1 - ReLU(x)) : 1;
-		//return ReLU(x) * (1 - ReLU(x));
+		return ReLU(x) * (1 - ReLU(x));
 	}
 
 	double random(double min = 0, double max = 1) {
@@ -132,7 +132,7 @@ public:
 			//neurons[neurons.size() - 1][i].error = error == 0 ? 0 : pow(error, 2) * error / abs(error);
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
 			//neurons[neurons.size() - 1][i].error = target[i] - predict[i];
-			cout << predict[i] << ";  " << target[i] << endl;
+			//cout << predict[i] << ";  " << target[i] << endl;
 			//neurons[neurons.size() - 1][i].error = predict[i] - target[i];
 			cout << "neurons[" << neurons.size() - 1 << "][" << i << "].error = " << neurons[neurons.size() - 1][i].error << endl;
 			//MSE += pow(predict[i] - target[i], 2);
