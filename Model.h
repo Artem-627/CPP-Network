@@ -124,7 +124,7 @@ public:
 		vector<double> predict = this->predict(task);
 		//this->ShowModel();
 		//this->ShowNeurons();
-		if (predict.size() != target.size())  exit(1);
+		if (predict.size() != target.size())  exit(10);
 		//double MSE = 0;
 		//double error = 0;
 		for (int i = 0; i < predict.size(); i++) {
