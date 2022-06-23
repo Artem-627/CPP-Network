@@ -45,11 +45,11 @@ int main() {
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(0);
+	targeta_buffer.push_back(1);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(0);
+	targeta_buffer.push_back(1);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
