@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const double learning_rate = 0.001;
+const double learning_rate = .02;
 
 int main() {
 	//srand(time(NULL));
@@ -20,41 +20,50 @@ int main() {
 
 
 	vector<double> inputs_buffer;
-	inputs_buffer.push_back(0);
-	inputs_buffer.push_back(0);
-	inputs.push_back(inputs_buffer);
-
-	inputs_buffer.clear();
-	inputs_buffer.push_back(0);
-	inputs_buffer.push_back(1);
+	inputs_buffer.push_back(2);
+	inputs_buffer.push_back(7);
 	inputs.push_back(inputs_buffer);
 
 	inputs_buffer.clear();
 	inputs_buffer.push_back(1);
-	inputs_buffer.push_back(0);
+	inputs_buffer.push_back(15);
 	inputs.push_back(inputs_buffer);
 
 	inputs_buffer.clear();
-	inputs_buffer.push_back(1);
+	inputs_buffer.push_back(3);
 	inputs_buffer.push_back(1);
 	inputs.push_back(inputs_buffer);
+
+	//inputs_buffer.clear();
+	//inputs_buffer.push_back(1);
+	//inputs_buffer.push_back(0);
+	//inputs.push_back(inputs_buffer);
+
+	//inputs_buffer.clear();
+	//inputs_buffer.push_back(1);
+	//inputs_buffer.push_back(1);
+	//inputs.push_back(inputs_buffer);
 
 
 	vector<double> targeta_buffer;
-	targeta_buffer.push_back(0);
+	targeta_buffer.push_back(9);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(1);
+	targeta_buffer.push_back(16);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(1);
+	targeta_buffer.push_back(4);
 	targets.push_back(targeta_buffer);
 
-	targeta_buffer.clear();
-	targeta_buffer.push_back(1);
-	targets.push_back(targeta_buffer);
+	//targeta_buffer.clear();
+	//targeta_buffer.push_back(1);
+	//targets.push_back(targeta_buffer);
+
+	//targeta_buffer.clear();
+	//targeta_buffer.push_back(1);
+	//targets.push_back(targeta_buffer);
 
 
 
@@ -74,8 +83,8 @@ int main() {
 	//target.push_back(0.5);
 	//target.push_back(0.08);
 
-	for (int i = 0; i < 1000; i++){
-		for (int j = 0; j < 4; j++) {
+	for (int i = 0; i < 100; i++){
+		for (int j = 0; j < 2; j++) {
 			model.learn(inputs[j], targets[j], learning_rate);
 		}
 	}
@@ -86,8 +95,8 @@ int main() {
 
 
 	input.clear();
-	input.push_back(0);
-	input.push_back(0);
+	input.push_back(2);
+	input.push_back(6);
 
 	vector<double> predict = model.predict(input);
 
@@ -102,7 +111,7 @@ int main() {
 
 	input.clear();
 	input.push_back(1);
-	input.push_back(1);
+	input.push_back(5);
 
 	predict = model.predict(input);
 
@@ -115,35 +124,6 @@ int main() {
 
 	cout << "<=============>" << endl;
 
-	input.clear();
-	input.push_back(0);
-	input.push_back(1);
-
-	predict = model.predict(input);
-
-	for (int i = 0; i < input.size(); i++)
-		cout << input[i] << "; ";
-
-	cout << endl;
-	for (int i = 0; i < predict.size(); i++)
-		cout << " " << i << ":  " << predict[i] << endl;
-
-	cout << "<=============>" << endl;
-
-	input.clear();
-	input.push_back(1);
-	input.push_back(0);
-
-	predict = model.predict(input);
-
-	for (int i = 0; i < input.size(); i++)
-		cout << input[i] << "; ";
-
-	cout << endl;
-	for (int i = 0; i < predict.size(); i++)
-		cout << " " << i << ":  " << predict[i] << endl;
-
-	cout << "<=============>" << endl;
 
 
 	return 0;

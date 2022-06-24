@@ -35,15 +35,15 @@ public:
 	}
 
 	double ReLU(double x) {
-		//return x > 0 ? x : 0;
+		return x > 0 ? x : 0;
 		//return x;
-		return 1 / (1 + exp(-x));
+		//return 1 / (1 + exp(-x));
 	}
 	
 	double d_ReLU(double x) {
-		//return 1;
+		return 1;
 		//return ReLU(x) * (1 - ReLU(x)) == 0 ? ReLU(x) * (1 - ReLU(x)) : 1;
-		return ReLU(x) * (1 - ReLU(x));
+		//return ReLU(x) * (1 - ReLU(x));
 	}
 
 	double random(double min = 0, double max = 1) {
