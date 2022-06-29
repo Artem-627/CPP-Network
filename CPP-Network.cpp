@@ -46,15 +46,15 @@ int main() {
 
 
 	vector<double> targeta_buffer;
-	targeta_buffer.push_back(9);
+	targeta_buffer.push_back(11);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(16);
+	targeta_buffer.push_back(17);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(4);
+	targeta_buffer.push_back(7);
 	targets.push_back(targeta_buffer);
 
 	//targeta_buffer.clear();
