@@ -144,19 +144,24 @@ public:
 
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
-				double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
-				//cout << "	local error = " << local_error << " (" << neurons[layer][neuron].value << ")" << endl;
-				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
-					//double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
-					//cout << "local_error = " << neurons[layer][neuron].error << " * " << d_ReLU(neurons[layer][neuron].value) << " = " << local_error << endl;
-					//neurons[layer][neuron].weights[weight] += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight] * neurons[layer][neuron].error * learning_rate;
-					//neurons[layer][neuron].weights[weight] += d_ReLU(neurons[layer][neuron].value) * neurons[layer][neuron].error * neurons[layer - 1][weight].value * learning_rate;
-					//cout << "neurons[" << layer << "][" << neuron << "].error = " << local_error << endl;
-					//cout << "neurons[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].weights[weight];
-					double delta_weight = local_error * neurons[layer - 1][weight].value * learning_rate;
-					//cout << neurons[layer][neuron].weights[weight] << ";	";
-					neurons[layer][neuron].weights[weight] -= delta_weight;
-					//cout << neurons[layer][neuron].weights[weight] << ";	" << delta_weight << endl;
+				neurons[layer - 1][neuron].error = 0;
+				cout << "neurons[" << layer - 1 << "][" << neuron << "].error = " << neurons[layer][neuron].error << endl;
+			}
+			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
+			double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
+			//cout << "	local error = " << local_error << " (" << neurons[layer][neuron].value << ")" << endl;
+			for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
+				neurons[layer - 1][weight].error += neurons[layer][neuron].value * neurons[layer][neuron].weights[weight];
+				//double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
+				//cout << "local_error = " << neurons[layer][neuron].error << " * " << d_ReLU(neurons[layer][neuron].value) << " = " << local_error << endl;
+				//neurons[layer][neuron].weights[weight] += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight] * neurons[layer][neuron].error * learning_rate;
+				//neurons[layer][neuron].weights[weight] += d_ReLU(neurons[layer][neuron].value) * neurons[layer][neuron].error * neurons[layer - 1][weight].value * learning_rate;
+				//cout << "neurons[" << layer << "][" << neuron << "].error = " << local_error << endl;
+				//cout << "neurons[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].weights[weight];
+				double delta_weight = local_error * neurons[layer - 1][weight].value * learning_rate;
+				//cout << neurons[layer][neuron].weights[weight] << ";	";
+				neurons[layer][neuron].weights[weight] -= delta_weight;
+				//cout << neurons[layer][neuron].weights[weight] << ";	" << delta_weight << endl;
 				}
 			}
 		}

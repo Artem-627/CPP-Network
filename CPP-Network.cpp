@@ -10,7 +10,7 @@ int main() {
 	Model model(2);
 
 
-	//model.Add(5);
+	model.Add(2);
 	model.Add(1);
 
 
@@ -46,15 +46,15 @@ int main() {
 
 
 	vector<double> targeta_buffer;
-	targeta_buffer.push_back(11);
+	targeta_buffer.push_back(18);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(17);
+	targeta_buffer.push_back(32);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(7);
+	targeta_buffer.push_back(8);
 	targets.push_back(targeta_buffer);
 
 	//targeta_buffer.clear();
@@ -69,7 +69,7 @@ int main() {
 
 	//input.push_back(1.6);
 
-	//model.ShowModel();
+	model.ShowModel();
 	//model.ShowNeurons();
 
 
