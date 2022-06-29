@@ -141,6 +141,7 @@ public:
 		//cout << error << endl;
 		//cout << MSE << endl;
 		//cout << "---" << endl;
+
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
 				double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
