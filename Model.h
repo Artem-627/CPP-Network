@@ -151,7 +151,7 @@ public:
 			double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 			//cout << "	local error = " << local_error << " (" << neurons[layer][neuron].value << ")" << endl;
 			for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
-				neurons[layer - 1][weight].error += neurons[layer][neuron].value * neurons[layer][neuron].weights[weight];
+				//neurons[layer - 1][weight].error += neurons[layer][neuron].value * neurons[layer][neuron].weights[weight];
 				//double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 				//cout << "local_error = " << neurons[layer][neuron].error << " * " << d_ReLU(neurons[layer][neuron].value) << " = " << local_error << endl;
 				//neurons[layer][neuron].weights[weight] += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight] * neurons[layer][neuron].error * learning_rate;
