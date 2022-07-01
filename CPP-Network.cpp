@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const double learning_rate = .02;
+const double learning_rate = .01;
 
 int main() {
 	//srand(time(NULL));
