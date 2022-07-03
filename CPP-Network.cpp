@@ -10,8 +10,8 @@ int main() {
 	Model model(2);
 
 
-	model.Add(2);
-	model.Add(2);
+	//model.Add(2);
+	model.Add(3);
 	model.Add(1);
 
 
@@ -84,7 +84,7 @@ int main() {
 	//target.push_back(0.5);
 	//target.push_back(0.08);
 
-	for (int i = 0; i < 2; i++){
+	for (int i = 0; i < 100; i++){
 		for (int j = 0; j < 3; j++) {
 			model.learn(inputs[j], targets[j], learning_rate);
 		}
@@ -113,6 +113,21 @@ int main() {
 	input.clear();
 	input.push_back(1);
 	input.push_back(5);
+
+	predict = model.predict(input);
+
+	for (int i = 0; i < input.size(); i++)
+		cout << input[i] << "; ";
+
+	cout << endl;
+	for (int i = 0; i < predict.size(); i++)
+		cout << " " << i << ":  " << predict[i] << endl;
+
+	cout << "<=============>" << endl;
+
+	input.clear();
+	input.push_back(1.5);
+	input.push_back(4);
 
 	predict = model.predict(input);
 

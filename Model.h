@@ -151,7 +151,7 @@ public:
 				cout << "	local error[" << layer << "][" << neuron << "] = " << local_error << endl;
 				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
 
-					neurons[layer - 1][weight].error -= local_error * neurons[layer][neuron].weights[weight];
+					neurons[layer - 1][weight].error += local_error * neurons[layer][neuron].weights[weight] * learning_rate / 5;
 					//double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 					//cout << "local_error = " << neurons[layer][neuron].error << " * " << d_ReLU(neurons[layer][neuron].value) << " = " << local_error << endl;
 					//neurons[layer][neuron].weights[weight] += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight] * neurons[layer][neuron].error * learning_rate;
