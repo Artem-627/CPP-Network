@@ -3,13 +3,14 @@
 
 using namespace std;
 
-const double learning_rate = .01;
+const double learning_rate = 0.05;
 
 int main() {
 	//srand(time(NULL));
 	Model model(2);
 
 
+	model.Add(2);
 	model.Add(2);
 	model.Add(1);
 
@@ -46,15 +47,15 @@ int main() {
 
 
 	vector<double> targeta_buffer;
-	targeta_buffer.push_back(18);
+	targeta_buffer.push_back(9);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(32);
+	targeta_buffer.push_back(16);
 	targets.push_back(targeta_buffer);
 
 	targeta_buffer.clear();
-	targeta_buffer.push_back(8);
+	targeta_buffer.push_back(4);
 	targets.push_back(targeta_buffer);
 
 	//targeta_buffer.clear();
@@ -83,8 +84,8 @@ int main() {
 	//target.push_back(0.5);
 	//target.push_back(0.08);
 
-	for (int i = 0; i < 100; i++){
-		for (int j = 0; j < 2; j++) {
+	for (int i = 0; i < 2; i++){
+		for (int j = 0; j < 3; j++) {
 			model.learn(inputs[j], targets[j], learning_rate);
 		}
 	}
