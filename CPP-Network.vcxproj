@@ -134,6 +134,9 @@
   <ItemGroup>
     <ClInclude Include="Model.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Downloads\dataset.csv" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
