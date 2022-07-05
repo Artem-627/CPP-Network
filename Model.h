@@ -34,6 +34,18 @@ public:
 		this->neurons.push_back(neuron_buffer);
 	}
 
+	vector<double> softmax(vector<double> inputs) {
+		vector<double> result;
+		float EkeY = 0;
+		for (int i = 0; i < inputs.size(); i++) {
+			EkeY += exp(inputs[i]);
+		}
+		for (int i = 0; i < inputs.size(); i++) {
+			result.push_back(exp(inputs[i]) / EkeY);
+		}
+		return result;
+	}
+
 	double ReLU(double x) {
 		return x > 0 ? x : 0;
 		//return x;
@@ -46,7 +58,7 @@ public:
 		//return ReLU(x) * (1 - ReLU(x));
 	}
 
-	double random(double min = 0, double max = 1) {
+	double random(double min = 0, double max = 0.0000001) {
 		return ((double)rand() / RAND_MAX) * max + min;
 	}
 
@@ -131,7 +143,11 @@ public:
 
 	void learn(vector<double> task, vector<double> target, double learning_rate) {
 		vector<double> predict = this->predict(task);
-		if (predict.size() != target.size())  exit(10);
+		if (predict.size() != target.size()) {
+			cout << "predict.size() = " << predict.size() << endl;
+			cout << "target.size() = " << target.size() << endl;
+			exit(10);
+		}
 		this->ClearErrors();
 		//double MSE = 0;
 		//double error = 0;
