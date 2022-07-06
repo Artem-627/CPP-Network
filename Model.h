@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <vector>
 
@@ -7,16 +7,24 @@ using namespace std;
 class Neuron {
 public:
 	vector<double> weights;
+	vector<double> batch_correction;
 	double value = 0;
 	double error;
 
 	Neuron(vector<double> weight) {
-		cout << "[Neuron with size = " << weight.size() << " created]" << endl;
 		this->weights = weight;
+		this->new_batch_correction(weight.size());
 	}
 
 	void clear() {
 		this->value = 0;
+	}
+
+	void new_batch_correction(int size) {
+		this->batch_correction.clear();
+		for (int i = 0; i < size; i++) {
+			this->batch_correction.push_back(0);
+		}
 	}
 };
 
@@ -58,7 +66,7 @@ public:
 		//return ReLU(x) * (1 - ReLU(x));
 	}
 
-	double random(double min = 0, double max = 0.0000001) {
+	double random(double min = 0, double max = 0.00001) {
 		return ((double)rand() / RAND_MAX) * max + min;
 	}
 
@@ -74,6 +82,7 @@ public:
 		}
 		neurons.push_back(neurons_buffer);
 		now_index++;
+		cout << "[Layer with size = " << quantity << " created]" << endl;
 	}
 
 	void ClearModel() {
@@ -94,6 +103,10 @@ public:
 				}
 			}
 		}
+	}
+
+	void NotClearErrors() {
+		
 	}
 
 	void ShowNeurons() {
@@ -141,53 +154,83 @@ public:
 		return predict;
 	}
 
-	void learn(vector<double> task, vector<double> target, double learning_rate) {
+	void learn(vector<double> task, vector<double> target, double learning_rate, bool corrected, int batch_size) {
 		vector<double> predict = this->predict(task);
 		if (predict.size() != target.size()) {
+			cout << "Prediction size don't equal target size!";
 			cout << "predict.size() = " << predict.size() << endl;
 			cout << "target.size() = " << target.size() << endl;
 			exit(10);
 		}
-		this->ClearErrors();
-		//double MSE = 0;
-		//double error = 0;
+		corrected ? this->ClearErrors() : this->NotClearErrors();
 		for (int i = 0; i < predict.size(); i++) {
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
-			//cout << "neurons[" << neurons.size() - 1 << "][" << i << "].error = ";
-			if (neurons[neurons.size() - 1][i].error >= 0) cout << " ";
-			cout << neurons[neurons.size() - 1][i].error << endl;
+			// Вывод ошибки каждого выходного нейрона
+			//if (neurons[neurons.size() - 1][i].error >= 0) cout << " ";
+			//cout << neurons[neurons.size() - 1][i].error << endl;
 		}
 
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
-			//for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
-			//	neurons[layer - 1][neuron].error = 0;
-			//	cout << "neurons[" << layer - 1 << "][" << neuron << "].error = " << neurons[layer][neuron].error << endl;
-			//}
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
 				double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
 				//cout << "	local error[" << layer << "][" << neuron << "] = " << local_error << endl;
 				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
 
-					neurons[layer - 1][weight].error += local_error * neurons[layer][neuron].weights[weight] * learning_rate / 10;
-					//double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
-					//cout << "local_error = " << neurons[layer][neuron].error << " * " << d_ReLU(neurons[layer][neuron].value) << " = " << local_error << endl;
-					//neurons[layer][neuron].weights[weight] += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight] * neurons[layer][neuron].error * learning_rate;
-					//neurons[layer][neuron].weights[weight] += d_ReLU(neurons[layer][neuron].value) * neurons[layer][neuron].error * neurons[layer - 1][weight].value * learning_rate;
-					//cout << "neurons[" << layer << "][" << neuron << "].error = " << local_error << endl;
-					//cout << "neurons[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].weights[weight];
+					neurons[layer - 1][weight].error += local_error * neurons[layer][neuron].weights[weight];
+					corrected ? neurons[layer - 1][weight].error /= batch_size : neurons[layer - 1][weight].error /= 1;
 					double delta_weight = local_error * neurons[layer - 1][weight].value * learning_rate;
-					//double delta_weight = local_error * learning_rate;
-					//cout << neurons[layer][neuron].weights[weight] << ";	";
 					neurons[layer][neuron].weights[weight] -= delta_weight;
-					//cout << neurons[layer][neuron].weights[weight] << ";	" << delta_weight << endl;
+					//neurons[layer][neuron].batch_correction[weight] += delta_weight;
+					
+
+					//if (corrected == true) {
+					//	//neurons[layer][neuron].batch_correction[weight] /= batch_size;
+					//	neurons[layer][neuron].weights[weight] -= neurons[layer][neuron].batch_correction[weight];
+					//	cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
+					//	neurons[layer][neuron].new_batch_correction(neurons[layer][neuron].batch_correction.size());
+					//}
 				}
-				//for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
-				//	cout << "neurons[" << layer - 1 << "][" << weight << "].error = " << neurons[layer - 1][weight].error << endl;
-				//}
 			}
 		}
 		//cout << "----------" << endl;
-		cout << endl;
+		cout << endl << "corrected = " << corrected << endl;
 	}
 	
+	void  fit(string dataset, double learning_rate, int epochs, int batch_size) {
+		system("cls");
+
+		fstream file_X_train;
+		string line, word, temp;
+		vector<double> X_train;
+		vector<double> Y_train;
+
+		for (int epoch = 1; epoch <= epochs; epoch++) {
+			cout << "Epoch " << epoch << "/" << epochs << ": " << endl;
+			int train_counter = 0;
+			file_X_train.close();
+			file_X_train.open(dataset, ios::in);
+			while (file_X_train >> temp) {
+				train_counter++;
+				if (train_counter % 1000 == 0) cout << "	" << train_counter << "/42000;" << endl;
+				X_train.clear();
+				Y_train.clear();
+				int Y_train_target = stoi(temp.substr(0, 1));
+				for (int i = 0; i < 10; i++) {
+					if (i == Y_train_target) Y_train.push_back(1);
+					else					Y_train.push_back(0);
+				}
+				temp.erase(0, 2);
+				size_t pos = 0;
+				string token;
+				while ((pos = temp.find(",")) != string::npos) {
+					token = temp.substr(0, pos);
+					X_train.push_back(stoi(token));
+					temp.erase(0, pos + 1);
+				}
+				X_train.push_back(stoi(temp));
+				train_counter % batch_size == 0 ? this->learn(X_train, Y_train, learning_rate, true, batch_size) : this->learn(X_train, Y_train, learning_rate, false, batch_size);
+				
+			}
+		}
+	}
 };
