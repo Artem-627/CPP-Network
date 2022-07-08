@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const double learning_rate = .00000001;
+const double learning_rate = .01;
 
 int main() {
 	//srand(time(NULL));
@@ -174,9 +174,9 @@ int main() {
 	//	cout << " " << i << ":  " << round(predict[i]) << endl;
 
 	//cout << "<=============>" << endl;
-
-getchar();
-model.fit("dataset.csv", learning_rate, 1, 1000);
+	cout << endl << "Press Enter to start fit...";
+	getchar();
+	model.fit("dataset.csv", learning_rate, 1, 100);
 
 
 	fstream file_X_test;
