@@ -162,8 +162,11 @@ public:
 		for (int i = 0; i < predict.size(); i++) {
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
 			// Вывод ошибки каждого выходного нейрона
-			//if (neurons[neurons.size() - 1][i].error >= 0) cout << " ";
-			//cout << neurons[neurons.size() - 1][i].error << endl;
+			if (corrected) {
+				cout << "	" << i << " > ";
+				if (neurons[neurons.size() - 1][i].error >= 0) cout << " ";
+				cout << neurons[neurons.size() - 1][i].error << endl;
+			}
 		}
 
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
@@ -177,19 +180,19 @@ public:
 					double delta_weight = local_error * neurons[layer - 1][weight].value * learning_rate;
 					//double delta_weight = local_error * learning_rate;
 					//if (corrected)
-						//neurons[layer][neuron].weights[weight] -= delta_weight;
+					//neurons[layer][neuron].weights[weight] -= delta_weight;
 					neurons[layer][neuron].batch_correction[weight] += delta_weight;
 					//if (corrected)
 					//cout << "correction for neuron[" << layer << "][" << neuron << "].batch_correction[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
 					
-
-					if (corrected == true) {
-						//neurons[layer][neuron].batch_correction[weight] /= batch_size;
-						neurons[layer][neuron].weights[weight] -= neurons[layer][neuron].batch_correction[weight];
-						//cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
-						neurons[layer][neuron].new_batch_correction(neurons[layer][neuron].batch_correction.size());
-						//cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl << endl;
-					}
+				}
+				if (corrected) {
+					//neurons[layer][neuron].batch_correction[weight] /= batch_size;
+					for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++)
+						 neurons[layer][neuron].weights[weight] -= neurons[layer][neuron].batch_correction[weight];
+					//cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
+					neurons[layer][neuron].new_batch_correction(neurons[layer][neuron].batch_correction.size());
+					//cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl << endl;
 				}
 			}
 		}

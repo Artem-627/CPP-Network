@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const double learning_rate = .01;
+const double learning_rate = .000000001;
 
 int main() {
 	//srand(time(NULL));
@@ -13,7 +13,7 @@ int main() {
 
 
 	//model.Add(40);
-	//model.Add(50);
+	model.Add(50);
 	//model.Add(20);
 	model.Add(10);
 
@@ -176,15 +176,15 @@ int main() {
 	//cout << "<=============>" << endl;
 	cout << endl << "Press Enter to start fit...";
 	getchar();
-	model.fit("dataset.csv", learning_rate, 1, 100);
+	model.fit("dataset.csv", learning_rate, 5, 1000);
 
 
 	fstream file_X_test;
 	file_X_test.open("dataset.csv", ios::in);
 	string line, word, temp;
 	int test_counter = 0;
-	int true_counter = 0;
-	int false_counter = 0;
+	float true_counter = 0;
+	float false_counter = 0;
 
 	vector<double> X_test;
 	while (file_X_test >> temp) {
@@ -203,7 +203,8 @@ int main() {
 		}
 		X_test.push_back(stoi(temp));
 
-		vector<double> predict = model.softmax(model.predict(X_test));
+		vector<double> predict = model.predict(X_test);
+		//vector<double> predict_chances = model.softmax(predict);
 
 		cout << endl;
 		int max_result = predict[0];
@@ -217,11 +218,11 @@ int main() {
 		else						false_counter++;
 
 
-		if (test_counter == 100) break;
+		if (test_counter == 1000) break;
 	}
 
-	cout << endl << "True:	" << true_counter << endl;
-	cout << "False:	" << false_counter << endl;
+	cout << endl << "True:	" << true_counter / 10 << "%" << endl;
+	cout << "False:	" << false_counter / 10 << "%" << endl;
 
 
 	return 0;
