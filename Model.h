@@ -67,7 +67,7 @@ public:
 		//return ReLU(x) * (1 - ReLU(x));
 	}
 
-	double random(double min = 0, double max = 0.00001) {
+	double random(double min = 0, double max = 0.01) {
 		return ((double)rand() / RAND_MAX) * max + min;
 	}
 
@@ -159,13 +159,19 @@ public:
 			cout << "target.size() = " << target.size() << endl;
 			exit(10);
 		}
+		//this->ClearErrors();
+
+		double MSE = 0;
 		for (int i = 0; i < predict.size(); i++) {
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
 			// Вывод ошибки каждого выходного нейрона
 			if (corrected) {
+				predict[i] == 1 ? cout << "+" << endl : cout << " " << endl;
 				cout << "	" << i << " > ";
-				if (neurons[neurons.size() - 1][i].error >= 0) cout << " ";
+				if (neurons[neurons.size() - 1][i].error >= 0)
+					cout << " ";
 				cout << neurons[neurons.size() - 1][i].error << endl;
+				MSE += pow(round(neurons[neurons.size() - 1][i].error * 100) / 100, 2);
 			}
 		}
 
@@ -180,25 +186,29 @@ public:
 					double delta_weight = local_error * neurons[layer - 1][weight].value * learning_rate;
 					//double delta_weight = local_error * learning_rate;
 					//if (corrected)
-					//neurons[layer][neuron].weights[weight] -= delta_weight;
-					neurons[layer][neuron].batch_correction[weight] += delta_weight;
+					neurons[layer][neuron].weights[weight] -= delta_weight;
+					//neurons[layer][neuron].batch_correction[weight] += delta_weight;
+					//if (corrected) cout << delta_weight << endl;
 					//if (corrected)
 					//cout << "correction for neuron[" << layer << "][" << neuron << "].batch_correction[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
 					
 				}
-				if (corrected) {
-					//neurons[layer][neuron].batch_correction[weight] /= batch_size;
-					for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++)
-						 neurons[layer][neuron].weights[weight] -= neurons[layer][neuron].batch_correction[weight];
-					//cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
-					neurons[layer][neuron].new_batch_correction(neurons[layer][neuron].batch_correction.size());
-					//cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl << endl;
-				}
+				//if (corrected) {
+				//	for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
+				//		//neurons[layer][neuron].batch_correction[weight] /= batch_size;
+				//		neurons[layer][neuron].weights[weight] -= neurons[layer][neuron].batch_correction[weight];
+				//		//cout << "Delta neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
+				//	}
+				//	neurons[layer][neuron].new_batch_correction(neurons[layer][neuron].batch_correction.size());
+				//	//cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl << endl;
+				//}
 			}
 		}
 		//if (corrected)
-			//this->ClearErrors();
-		//cout << "----------" << endl;
+			this->ClearErrors();
+			//cout << neurons[1][3].error << endl;
+		cout << "Mean squared error: " << MSE << endl;
+		cout << ">--------------------------<" << endl;
 	}
 	
 	void  fit(string dataset, double learning_rate, int epochs, int batch_size) {
