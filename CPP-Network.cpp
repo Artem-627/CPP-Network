@@ -5,20 +5,19 @@
 
 using namespace std;
 
-//const double learning_rate = .0000000001;
-const double learning_rate = .0001;
+const double learning_rate = .000000001;
+//const double learning_rate = .00001;
 
 int main() {
 	Model model(784);
-	model.Add(50);
-	model.Add(20);
+	//model.Add(30);
+	//model.Add(20);
 	model.Add(10);
-
 
 
 	cout << endl << "Press Enter to start fit...";
 	getchar();
-	model.fit("dataset.csv", learning_rate, 25, 100);
+	model.fit("dataset.csv", learning_rate, 1, 100);
 
 
 	fstream file_X_test;
@@ -28,6 +27,7 @@ int main() {
 	float true_counter = 0;
 	float false_counter = 0;
 
+	cout << "[Tests...]" << endl;
 	vector<double> X_test;
 	while (file_X_test >> temp) {
 		test_counter++;
@@ -48,25 +48,34 @@ int main() {
 		vector<double> predict = model.predict(X_test);
 		//vector<double> predict_chances = model.softmax(predict);
 
-		cout << endl;
+		//cout << endl;
 		int max_result = predict[0];
 		for (int i = 0; i < predict.size(); i++) {
 			//cout << " " << i << ":  " << round(predict[i]) << ";		" << predict[i] << endl;
 			if (predict[i] > predict[max_result])	 max_result = i;
 		}
-		cout << "Predict: " << max_result << ";	   Target: " << Y_test << endl;
-		cout << "<=================================>" << endl;
+		//cout << "Predict: " << max_result << ";	   Target: " << Y_test << endl;
+		//cout << "<=================================>" << endl;
 		if (max_result == Y_test)	true_counter++;
 		else						false_counter++;
 
 
-		if (test_counter == 1000) break;
+		if (test_counter == 100) break;
 	}
 
-	cout << endl << "True:	" << true_counter / 10 << "%" << endl;
-	cout << "False:	" << false_counter / 10 << "%" << endl;
+	cout << endl << "True:	" << true_counter / 1 << "%" << endl;
+	cout << "False:	" << false_counter / 1 << "%" << endl;
 
 
+	cout << endl << "Press Enter to see graphics...";
+	getchar();
+	system("cls");
+	cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << "Press Enter to exit..." << endl;
+	model.drawGraphic(model.Total_errors);
+	cin.get();
+	/*getchar();*/
+
+	exit;
 	return 0;
 }
 

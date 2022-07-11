@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <iostream>
 #include <vector>
+#include <Windows.h>
+#include <stdlib.h>
+#include <math.h>
 
 using namespace std;
 
@@ -32,6 +35,7 @@ class Model {
 public:
 	vector<vector<Neuron>> neurons;
 	int now_index = 1;
+	vector<double> Total_errors;
 
 	Model(int input_quantity) {
 		cout << "[Create model...]" << endl;
@@ -55,6 +59,35 @@ public:
 		return result;
 	}
 
+	void drawGraphic(vector<double> points) {
+		if (points.size() <= 1) cout << "Graphic is empty!" << endl;
+		else {
+			//POINT* p = new POINT[points.size() + 1];
+			//POINT* p = new POINT[10];
+			POINT p[500];
+
+			HDC hDC = GetDC(GetConsoleWindow());
+			HPEN Pen = CreatePen(PS_SOLID, 2, RGB(255, 255, 255));
+			SelectObject(hDC, Pen);
+
+			MoveToEx(hDC, 100, 100, NULL);
+			//LineTo(hDC, 200, 200);
+			//LineTo(hDC, 300, 200);
+
+			//for (int i = 0; i < points.size(); i++)
+			for (int i = 0; i < 500; i++)
+			{
+				//p[i].x = i;
+				//p[i].y = -points[i] * 500;
+				//p[i].y = i;
+			}
+			//MoveToEx(hDC, 0, 0, p);
+			//LineTo(hDC, 0, 0);
+
+			//Polyline(hDC, p, points.size());
+		}
+	}
+
 	double ReLU(double x) {
 		return x > 0 ? x : 0;
 		//return x;
@@ -67,7 +100,7 @@ public:
 		//return ReLU(x) * (1 - ReLU(x));
 	}
 
-	double random(double min = 0, double max = 0.01) {
+	double random(double min = 0, double max = 0.0000001) {
 		return ((double)rand() / RAND_MAX) * max + min;
 	}
 
@@ -161,18 +194,19 @@ public:
 		}
 		//this->ClearErrors();
 
-		double MSE = 0;
+		double Total_error = 0;
 		for (int i = 0; i < predict.size(); i++) {
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
 			// Вывод ошибки каждого выходного нейрона
 			if (corrected) {
-				predict[i] == 1 ? cout << "+" << endl : cout << " " << endl;
-				cout << "	" << i << " > ";
+				cout << "	";
+				target[i] == 1 ? cout << "+ " : cout << "  ";
+				cout << i << " > ";
 				if (neurons[neurons.size() - 1][i].error >= 0)
 					cout << " ";
 				cout << neurons[neurons.size() - 1][i].error << endl;
-				MSE += pow(round(neurons[neurons.size() - 1][i].error * 100) / 100, 2);
 			}
+			Total_error += abs(round(neurons[neurons.size() - 1][i].error * 100) / 100) / batch_size;
 		}
 
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
@@ -204,11 +238,13 @@ public:
 				//}
 			}
 		}
-		//if (corrected)
-			this->ClearErrors();
-			//cout << neurons[1][3].error << endl;
-		cout << "Mean squared error: " << MSE << endl;
-		cout << ">--------------------------<" << endl;
+		this->ClearErrors();
+		if (corrected) {
+			cout << "	Total error: " << Total_error << endl;
+			Total_errors.push_back(Total_error);
+			cout << "	>--------------------------<" << endl;
+			Total_error = 0;
+		}
 	}
 	
 	void  fit(string dataset, double learning_rate, int epochs, int batch_size) {
@@ -226,6 +262,7 @@ public:
 			file_X_train.open(dataset, ios::in);
 			while (file_X_train >> temp) {
 				train_counter++;
+				if (train_counter == 1000) break;
 				if (train_counter % batch_size == 0) cout << "	" << train_counter << "/42000;" << endl;
 				X_train.clear();
 				Y_train.clear();
