@@ -1,17 +1,14 @@
 ﻿#include <iostream>
 #include <string>
-#include <fstream>
 #include "Model.h"
 
 using namespace std;
 
 const double learning_rate = .000000001;
-//const double learning_rate = .00001;
+//const double learning_rate = .001;
 
 int main() {
 	Model model(784);
-	//model.Add(30);
-	//model.Add(20);
 	model.Add(10);
 
 
@@ -66,16 +63,19 @@ int main() {
 	cout << endl << "True:	" << true_counter / 1 << "%" << endl;
 	cout << "False:	" << false_counter / 1 << "%" << endl;
 
+	int error_colors[] = { 255, 0, 0 };
+	int acc_colors[] = { 0, 255, 0 };
 
 	cout << endl << "Press Enter to see graphics...";
 	getchar();
 	system("cls");
 	cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << "Press Enter to exit..." << endl;
-	model.drawGraphic(model.Total_errors);
-	cin.get();
+	Sleep(100);
+	model.initDraw();
+	model.drawGraphic(model.Total_errors, 2, error_colors);
+	model.drawGraphic(model.Total_accuracies, 2, acc_colors);
 	/*getchar();*/
 
-	exit;
 	return 0;
 }
 

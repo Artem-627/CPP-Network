@@ -3,6 +3,7 @@
 #include <vector>
 #include <Windows.h>
 #include <stdlib.h>
+#include <fstream>
 #include <math.h>
 
 using namespace std;
@@ -36,6 +37,10 @@ public:
 	vector<vector<Neuron>> neurons;
 	int now_index = 1;
 	vector<double> Total_errors;
+	double Total_error = 0;
+	vector<double> Total_accuracies;
+	double Total_accuracy = 0;
+	HDC hDC;
 
 	Model(int input_quantity) {
 		cout << "[Create model...]" << endl;
@@ -59,32 +64,29 @@ public:
 		return result;
 	}
 
-	void drawGraphic(vector<double> points) {
-		if (points.size() <= 1) cout << "Graphic is empty!" << endl;
-		else {
-			//POINT* p = new POINT[points.size() + 1];
-			//POINT* p = new POINT[10];
-			POINT p[500];
+	void initDraw() {
+		this->hDC = GetDC(GetConsoleWindow());
+		HPEN Pen = CreatePen(PS_SOLID, 1, RGB(255, 255, 255));
+		SelectObject(hDC, Pen);
 
-			HDC hDC = GetDC(GetConsoleWindow());
-			HPEN Pen = CreatePen(PS_SOLID, 2, RGB(255, 255, 255));
-			SelectObject(hDC, Pen);
+		MoveToEx(hDC, 0, 160, NULL);
+		LineTo(hDC, 800, 160);
+		MoveToEx(hDC, 0, 40, NULL);
+		LineTo(hDC, 800, 40);
+	}
+	
+	void drawGraphic(vector<double> points, int thickness, int color[]) {
+		//POINT* p = new POINT[points.size() + 1];
+		//POINT* p = new POINT[10];
+		//POINT p[500];
 
-			MoveToEx(hDC, 100, 100, NULL);
-			//LineTo(hDC, 200, 200);
-			//LineTo(hDC, 300, 200);
+		HPEN Pen = CreatePen(PS_SOLID, thickness, RGB(color[0], color[1], color[2]));
+		SelectObject(this->hDC, Pen);
+		MoveToEx(this->hDC, 20, (-points[0] * 120) + 160, NULL);
 
-			//for (int i = 0; i < points.size(); i++)
-			for (int i = 0; i < 500; i++)
-			{
-				//p[i].x = i;
-				//p[i].y = -points[i] * 500;
-				//p[i].y = i;
-			}
-			//MoveToEx(hDC, 0, 0, p);
-			//LineTo(hDC, 0, 0);
-
-			//Polyline(hDC, p, points.size());
+		for (int i = 0; i < points.size(); i++)
+		{
+			LineTo(this->hDC, i + 20, (-points[i] * 120) + 160);
 		}
 	}
 
@@ -100,7 +102,7 @@ public:
 		//return ReLU(x) * (1 - ReLU(x));
 	}
 
-	double random(double min = 0, double max = 0.0000001) {
+	double random(double min = 0, double max = 0.000001) {
 		return ((double)rand() / RAND_MAX) * max + min;
 	}
 
@@ -194,7 +196,6 @@ public:
 		}
 		//this->ClearErrors();
 
-		double Total_error = 0;
 		for (int i = 0; i < predict.size(); i++) {
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
 			// Вывод ошибки каждого выходного нейрона
@@ -206,8 +207,18 @@ public:
 					cout << " ";
 				cout << neurons[neurons.size() - 1][i].error << endl;
 			}
-			Total_error += abs(round(neurons[neurons.size() - 1][i].error * 100) / 100) / batch_size;
+			Total_error += pow(abs(neurons[neurons.size() - 1][i].error), 2);
 		}
+
+		int max_predict = 0;
+		int max_target = 0;
+		for (int i = 0; i < predict.size(); i++) {
+			if (predict[i] > predict[max_predict])	 max_predict = i;
+		}
+		for (int i = 0; i < target.size(); i++) {
+			if (target[i] > target[max_target])	 max_target = i;
+		}
+		if (max_predict == max_target) Total_accuracy++;
 
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
@@ -240,10 +251,14 @@ public:
 		}
 		this->ClearErrors();
 		if (corrected) {
-			cout << "	Total error: " << Total_error << endl;
+			Total_accuracy /= batch_size;
+			Total_error /= batch_size;
+			cout << "	MSE: " << Total_error << ";	Accuracy: " << Total_accuracy<< endl;
 			Total_errors.push_back(Total_error);
+			Total_accuracies.push_back(Total_accuracy);
 			cout << "	>--------------------------<" << endl;
 			Total_error = 0;
+			Total_accuracy = 0;
 		}
 	}
 	
@@ -257,12 +272,12 @@ public:
 
 		for (int epoch = 1; epoch <= epochs; epoch++) {
 			cout << "Epoch " << epoch << "/" << epochs << ": " << endl;
-			int train_counter = 0;
+			int train_counter = 1;
 			file_X_train.close();
 			file_X_train.open(dataset, ios::in);
 			while (file_X_train >> temp) {
 				train_counter++;
-				if (train_counter == 1000) break;
+				if (train_counter == 1000) break; // Выход из эпохи обучения раньше ее окончания
 				if (train_counter % batch_size == 0) cout << "	" << train_counter << "/42000;" << endl;
 				X_train.clear();
 				Y_train.clear();
@@ -284,5 +299,12 @@ public:
 				
 			}
 		}
+	}
+
+	void safeModel(string namefile, Model* mod) {
+		fstream file_to_write;
+		file_to_write.open(namefile, ios_base::binary);
+		file_to_write.write((char*)mod, sizeof(Model));
+		file_to_write.close();
 	}
 };
