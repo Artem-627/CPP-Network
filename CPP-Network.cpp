@@ -13,9 +13,13 @@ int main() {
 
 
 	cout << endl << "Press Enter to start fit...";
-	getchar();
+	//getchar();
 	model.fit("dataset.csv", learning_rate, 1, 100);
 
+	safeModel("first.txt", &model);
+	Model loadedModel = loadModel("first.txt");
+
+	cout << "[Debug]	Model load" << endl;
 
 	fstream file_X_test;
 	file_X_test.open("dataset.csv", ios::in);
@@ -42,13 +46,14 @@ int main() {
 		}
 		X_test.push_back(stoi(temp));
 
-		vector<double> predict = model.predict(X_test);
+		vector<double> predict = loadedModel.predict(X_test);
 		//vector<double> predict_chances = model.softmax(predict);
 
 		//cout << endl;
 		int max_result = predict[0];
 		for (int i = 0; i < predict.size(); i++) {
 			//cout << " " << i << ":  " << round(predict[i]) << ";		" << predict[i] << endl;
+			cout << "i: " << i << endl;
 			if (predict[i] > predict[max_result])	 max_result = i;
 		}
 		//cout << "Predict: " << max_result << ";	   Target: " << Y_test << endl;
@@ -63,18 +68,17 @@ int main() {
 	cout << endl << "True:	" << true_counter / 1 << "%" << endl;
 	cout << "False:	" << false_counter / 1 << "%" << endl;
 
-	int error_colors[] = { 255, 0, 0 };
-	int acc_colors[] = { 0, 255, 0 };
+	//int error_colors[] = { 255, 0, 0 };
+	//int acc_colors[] = { 0, 255, 0 };
 
-	cout << endl << "Press Enter to see graphics...";
-	getchar();
-	system("cls");
-	cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << "Press Enter to exit..." << endl;
-	Sleep(100);
-	model.initDraw();
-	model.drawGraphic(model.Total_errors, 2, error_colors);
-	model.drawGraphic(model.Total_accuracies, 2, acc_colors);
-	/*getchar();*/
+	//cout << endl << "Press Enter to see graphics...";
+	//getchar();
+	//system("cls");
+	//cout << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << endl << "Press Enter to exit..." << endl;
+	//Sleep(100);
+	//loadedModel.initDraw();
+	//loadedModel.drawGraphic(loadedModel.Total_errors, 2, error_colors);
+	//loadedModel.drawGraphic(loadedModel.Total_accuracies, 2, acc_colors);5
 
 	return 0;
 }

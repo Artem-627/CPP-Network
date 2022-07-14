@@ -52,6 +52,8 @@ public:
 		cout << "[Layer with size = " << input_quantity << " created]" << endl;
 	}
 
+	Model() {}
+
 	vector<double> softmax(vector<double> inputs) {
 		vector<double> result;
 		float EkeY = 0;
@@ -300,11 +302,23 @@ public:
 			}
 		}
 	}
-
-	void safeModel(string namefile, Model* mod) {
-		fstream file_to_write;
-		file_to_write.open(namefile, ios_base::binary);
-		file_to_write.write((char*)mod, sizeof(Model));
-		file_to_write.close();
-	}
 };
+
+void safeModel(string namefile, Model* model) {
+	ofstream file_to_write;
+	file_to_write.open(namefile, ios_base::binary);
+	file_to_write.write((char*)model, sizeof(model));
+	file_to_write.close();
+	cout << "Model saved" << endl;
+}
+
+Model loadModel(string namefile){
+	Model model;
+	ifstream file_to_read;
+	file_to_read.open(namefile, ios_base::binary);
+	file_to_read.read((char*)&model, sizeof(file_to_read));
+	file_to_read.close();
+	cout << "Model loaded" << endl;
+	cout << "[Debug].loadModel()		Model loaded" << endl;
+	return model;
+}
