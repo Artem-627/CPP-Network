@@ -40,7 +40,6 @@ public:
 	double Total_error = 0;
 	vector<double> Total_accuracies;
 	double Total_accuracy = 0;
-	HDC hDC;
 
 	Model(int input_quantity) {
 		cout << "[Create model...]" << endl;
@@ -64,32 +63,6 @@ public:
 			result.push_back(exp(inputs[i]) / EkeY);
 		}
 		return result;
-	}
-
-	void initDraw() {
-		this->hDC = GetDC(GetConsoleWindow());
-		HPEN Pen = CreatePen(PS_SOLID, 1, RGB(255, 255, 255));
-		SelectObject(hDC, Pen);
-
-		MoveToEx(hDC, 0, 160, NULL);
-		LineTo(hDC, 800, 160);
-		MoveToEx(hDC, 0, 40, NULL);
-		LineTo(hDC, 800, 40);
-	}
-	
-	void drawGraphic(vector<double> points, int thickness, int color[]) {
-		//POINT* p = new POINT[points.size() + 1];
-		//POINT* p = new POINT[10];
-		//POINT p[500];
-
-		HPEN Pen = CreatePen(PS_SOLID, thickness, RGB(color[0], color[1], color[2]));
-		SelectObject(this->hDC, Pen);
-		MoveToEx(this->hDC, 20, (-points[0] * 120) + 160, NULL);
-
-		for (int i = 0; i < points.size(); i++)
-		{
-			LineTo(this->hDC, i + 20, (-points[i] * 120) + 160);
-		}
 	}
 
 	double ReLU(double x) {
@@ -120,7 +93,7 @@ public:
 		}
 		neurons.push_back(neurons_buffer);
 		now_index++;
-		cout << "[Layer with size = " << quantity << " created]" << endl;
+		cout << "[Fully-connected layer with size = " << quantity << " created]" << endl;
 	}
 
 	void ClearModel() {
@@ -166,21 +139,17 @@ public:
 	vector<double> predict(vector<double> inputs) {
 		vector<double> predict;	predict.clear();
 		ClearModel();
-		//cout << "Cleared model: " << endl << endl;
-		//this->ShowModel();
-		//cout << endl << endl;
+
 		for (int input = 0; input < neurons[0].size(); input++) {
 			neurons[0][input].value = inputs[input];
-			//cout << "neurons[0][input].value = inputs[input] = ";
 		}
-		//this->ShowModel();
+
 		for (int layer = 1; layer < neurons.size(); layer++) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
 				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
 					neurons[layer][neuron].value += neurons[layer - 1][weight].value * neurons[layer][neuron].weights[weight];
 				}
 			}
-			//this->ShowModel();
 		}
 		for (int neuron = 0; neuron < neurons[neurons.size() - 1].size(); neuron++) {
 			predict.push_back(ReLU(neurons[neurons.size() - 1][neuron].value));
@@ -196,19 +165,18 @@ public:
 			cout << "target.size() = " << target.size() << endl;
 			exit(10);
 		}
-		//this->ClearErrors();
 
 		for (int i = 0; i < predict.size(); i++) {
 			neurons[neurons.size() - 1][i].error = predict[i] - target[i];
 			// Вывод ошибки каждого выходного нейрона
-			if (corrected) {
+			/*if (corrected) {
 				cout << "	";
 				target[i] == 1 ? cout << "+ " : cout << "  ";
 				cout << i << " > ";
 				if (neurons[neurons.size() - 1][i].error >= 0)
 					cout << " ";
 				cout << neurons[neurons.size() - 1][i].error << endl;
-			}
+			}*/
 			Total_error += pow(abs(neurons[neurons.size() - 1][i].error), 2);
 		}
 
@@ -225,30 +193,12 @@ public:
 		for (int layer = neurons.size() - 1; layer > 0; layer--) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
 				double local_error = neurons[layer][neuron].error * d_ReLU(neurons[layer][neuron].value);
-				//cout << "	local error[" << layer << "][" << neuron << "] = " << local_error << endl;
 				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
 
 					neurons[layer - 1][weight].error += local_error * neurons[layer][neuron].weights[weight];
-					//corrected ? neurons[layer - 1][weight].error /= batch_size : neurons[layer - 1][weight].error /= 1;
 					double delta_weight = local_error * neurons[layer - 1][weight].value * learning_rate;
-					//double delta_weight = local_error * learning_rate;
-					//if (corrected)
 					neurons[layer][neuron].weights[weight] -= delta_weight;
-					//neurons[layer][neuron].batch_correction[weight] += delta_weight;
-					//if (corrected) cout << delta_weight << endl;
-					//if (corrected)
-					//cout << "correction for neuron[" << layer << "][" << neuron << "].batch_correction[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
-					
 				}
-				//if (corrected) {
-				//	for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
-				//		//neurons[layer][neuron].batch_correction[weight] /= batch_size;
-				//		neurons[layer][neuron].weights[weight] -= neurons[layer][neuron].batch_correction[weight];
-				//		//cout << "Delta neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl;
-				//	}
-				//	neurons[layer][neuron].new_batch_correction(neurons[layer][neuron].batch_correction.size());
-				//	//cout << "correction for neuron[" << layer << "][" << neuron << "].weights[" << weight << "] = " << neurons[layer][neuron].batch_correction[weight] << endl << endl;
-				//}
 			}
 		}
 		this->ClearErrors();
@@ -258,7 +208,7 @@ public:
 			cout << "	MSE: " << Total_error << ";	Accuracy: " << Total_accuracy<< endl;
 			Total_errors.push_back(Total_error);
 			Total_accuracies.push_back(Total_accuracy);
-			cout << "	>--------------------------<" << endl;
+			//cout << "	>--------------------------<" << endl;
 			Total_error = 0;
 			Total_accuracy = 0;
 		}
@@ -279,7 +229,7 @@ public:
 			file_X_train.open(dataset, ios::in);
 			while (file_X_train >> temp) {
 				train_counter++;
-				if (train_counter == 1000) break; // Выход из эпохи обучения раньше ее окончания
+				//if (train_counter == 25000) break; // Выход из эпохи обучения раньше ее окончания
 				if (train_counter % batch_size == 0) cout << "	" << train_counter << "/42000;" << endl;
 				X_train.clear();
 				Y_train.clear();
@@ -302,23 +252,48 @@ public:
 			}
 		}
 	}
+
+	float getTotalAccuracy(string dataset, int iterations) {
+		fstream file_X_test;
+		file_X_test.open("dataset.csv", ios::in);
+		string line, word, temp;
+		int test_counter = 0;
+		float true_counter = 0;
+		float false_counter = 0;
+		vector<double> X_test;
+
+		while (file_X_test >> temp) {
+			test_counter++;
+
+			X_test.clear();
+			int Y_test = stoi(temp.substr(0, 1));
+			temp.erase(0, 2);
+			size_t pos = 0;
+			string token;
+			while ((pos = temp.find(",")) != string::npos) {
+				token = temp.substr(0, pos);
+				X_test.push_back(stoi(token));
+				temp.erase(0, pos + 1);
+			}
+			X_test.push_back(stoi(temp));
+
+
+			vector<double> predict = this->predict(X_test);
+			vector<double> predict_chances = this->softmax(predict);
+
+			int max_result = predict[0];
+			for (int i = 0; i < predict.size(); i++) {
+				if (predict[i] > predict[max_result])	 max_result = i;
+			}
+
+			if (max_result == Y_test) {
+				true_counter++;
+			}
+
+			if (test_counter == iterations) break;
+		}
+
+		//std::cout << "[Debug] from model.getTotalAccuracy()" << std::endl << "True_counter = " << true_counter << std::endl << "Test_counter = " << test_counter << std::endl;
+		return ((float)true_counter / (float)test_counter);
+	}
 };
-
-void safeModel(string namefile, Model* model) {
-	ofstream file_to_write;
-	file_to_write.open(namefile, ios_base::binary);
-	file_to_write.write((char*)model, sizeof(model));
-	file_to_write.close();
-	cout << "Model saved" << endl;
-}
-
-Model loadModel(string namefile){
-	Model model;
-	ifstream file_to_read;
-	file_to_read.open(namefile, ios_base::binary);
-	file_to_read.read((char*)&model, sizeof(file_to_read));
-	file_to_read.close();
-	cout << "Model loaded" << endl;
-	cout << "[Debug].loadModel()		Model loaded" << endl;
-	return model;
-}
