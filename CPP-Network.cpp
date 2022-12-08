@@ -7,39 +7,27 @@
 #include <opencv2/highgui.hpp>
 #include "Model.h"
 
-const double learning_rate = .0001;
-
-float getPixelColor(cv::Mat image, int x, int y) {
-	float color = (float)(image.at<cv::Vec3b>(cv::Point(y, x))[0] + image.at<cv::Vec3b>(cv::Point(y, x))[1] + image.at<cv::Vec3b>(cv::Point(y, x))[2]) / (3 * 255);
-	return color;
-}
+const std::string dataset = "dataset.csv";
+const double learning_rate = .00001;
+const int epochs = 0;
+const int batch_size = 1000;
 
 int main() {
 	Model model(784);
-	model.Add(100);
+	model.Add(150);
 	model.Add(10);
 
 	system("pause");
 
-	model.fit("dataset.csv", learning_rate, 5, 1000);
+	model.fit(dataset, learning_rate, epochs, batch_size);
 
 	std::cout << "[Tests...]" << std::endl;
-	std::cout << "Total accuracy = " << model.getTotalAccuracy("dataset.csv", 10000) << std::endl;
+	std::cout << "Total accuracy = " << model.getTotalAccuracy(dataset, 10000) << std::endl;
 
 
 	// Пример
-	cv::Mat img = cv::imread("C:/Users/Artem/source/repos/OpenCV/img1.jpg");
-	img.resize(28, 28);
+	std::vector<double> predict = model.predict("C:/Users/Artem/source/repos/OpenCV/img1.jpg", true);
 
-	std::vector<double> image(28*28);
-
-	for (int i = 0; i < 28; ++i) {
-		for (int j = 0; j < 28; ++j) {
-			image[28 * i + j] = (float)getPixelColor(img, i, j);
-		}
-	}
-
-	std::vector<double> predict = model.predict(image);
 	int result = 0;
 	for (int i = 0; i < 10; ++i) {
 		if (predict[i] > predict[result]) {
@@ -49,10 +37,7 @@ int main() {
 
 	std::cout << "Number on picture: " << result << std::endl;
 
-	cv::namedWindow("Image");
-	cv::imshow("Image", img);
-	cv::waitKey(0);
-	cv::destroyAllWindows();
+	model.graph({1, 2, 3, 4, 3, 3, 2, 3, 1});
 
 	return 0;
 }

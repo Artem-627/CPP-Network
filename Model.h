@@ -1,10 +1,12 @@
 ﻿#pragma once
 #include <iostream>
 #include <vector>
-#include <Windows.h>
+//#include <Windows.h>
 #include <stdlib.h>
 #include <fstream>
 #include <math.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
 
 class Neuron {
 public:
@@ -75,7 +77,7 @@ public:
 		//return ReLU(x) * (1 - ReLU(x));
 	}
 
-	double random(double min = 0, double max = 0.000001) {
+	double random(double min = 0, double max = .00000001) {
 		return ((double)rand() / RAND_MAX) * max + min;
 	}
 
@@ -134,6 +136,11 @@ public:
 		std::cout << std::endl;
 	}
 
+	float getPixelColor(cv::Mat image, int x, int y) {
+		float color = (float)(image.at<cv::Vec3b>(cv::Point(y, x))[0] + image.at<cv::Vec3b>(cv::Point(y, x))[1] + image.at<cv::Vec3b>(cv::Point(y, x))[2]) / (3 * 255);
+		return color;
+	}
+
 	std::vector<double> predict(std::vector<double> inputs) {
 		std::vector<double> predict;	predict.clear();
 		ClearModel();
@@ -153,6 +160,28 @@ public:
 			predict.push_back(ReLU(neurons[neurons.size() - 1][neuron].value));
 		}
 		return predict;
+	}
+
+	std::vector<double> predict(std::string inputs_path_to_image, bool draw) {
+		cv::Mat img = cv::imread("C:/Users/Artem/source/repos/OpenCV/img1.jpg");
+		img.resize(28, 28);
+
+		std::vector<double> image(28 * 28);
+
+		for (int i = 0; i < 28; ++i) {
+			for (int j = 0; j < 28; ++j) {
+				image[28 * i + j] = (float)this->getPixelColor(img, i, j);
+			}
+		}
+
+		std::vector<double> predict = this->predict(image);
+
+		if (draw) {
+			cv::namedWindow("Image");
+			cv::imshow("Image", img);
+			cv::waitKey(0);
+			cv::destroyAllWindows();
+		}
 	}
 
 	void learn(std::vector<double> task, std::vector<double> target, double learning_rate, bool corrected, int batch_size) {
@@ -293,5 +322,20 @@ public:
 
 		//std::cout << "[Debug] from model.getTotalAccuracy()" << std::endl << "True_counter = " << true_counter << std::endl << "Test_counter = " << test_counter << std::endl;
 		return ((float)true_counter / (float)test_counter);
+	}
+
+	void graph(std::vector<double> values) {
+		double max_value = values[0];
+		double min_value = 0;
+		for (double value : values) {
+			if (value > max_value) {
+				max_value = value;
+			}
+		}
+
+		cv::Mat img(cv::Mat::zeros(300, 300, CV_8U));
+
+		imshow("window", img);
+		cv::waitKey();
 	}
 };
