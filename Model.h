@@ -6,16 +6,14 @@
 #include <fstream>
 #include <math.h>
 
-using namespace std;
-
 class Neuron {
 public:
-	vector<double> weights;
-	vector<double> batch_correction;
+	std::vector<double> weights;
+	std::vector<double> batch_correction;
 	double value = 0;
 	double error;
 
-	Neuron(vector<double> weight) {
+	Neuron(std::vector<double> weight) {
 		this->weights = weight;
 		this->new_batch_correction(weight.size());
 	}
@@ -34,27 +32,27 @@ public:
 
 class Model {
 public:
-	vector<vector<Neuron>> neurons;
+	std::vector<std::vector<Neuron>> neurons;
 	int now_index = 1;
-	vector<double> Total_errors;
+	std::vector<double> Total_errors;
 	double Total_error = 0;
-	vector<double> Total_accuracies;
+	std::vector<double> Total_accuracies;
 	double Total_accuracy = 0;
 
 	Model(int input_quantity) {
-		cout << "[Create model...]" << endl;
-		vector<Neuron> neuron_buffer; neuron_buffer.clear();
+		std::cout << "[Create model...]" << std::endl;
+		std::vector<Neuron> neuron_buffer; neuron_buffer.clear();
 		for (int i = 0; i < input_quantity; i++) {
 			neuron_buffer.push_back(Neuron({}));
 		}
 		this->neurons.push_back(neuron_buffer);
-		cout << "[Layer with size = " << input_quantity << " created]" << endl;
+		std::cout << "[Input layer with size = " << input_quantity << " created]" << std::endl;
 	}
 
 	Model() {}
 
-	vector<double> softmax(vector<double> inputs) {
-		vector<double> result;
+	std::vector<double> softmax(std::vector<double> inputs) {
+		std::vector<double> result;
 		float EkeY = 0;
 		for (int i = 0; i < inputs.size(); i++) {
 			EkeY += exp(inputs[i]);
@@ -82,8 +80,8 @@ public:
 	}
 
 	void Add(int quantity) {
-		vector<Neuron> neurons_buffer;	neurons_buffer.clear();
-		vector<double> weights_buffer;	weights_buffer.clear();
+		std::vector<Neuron> neurons_buffer;	neurons_buffer.clear();
+		std::vector<double> weights_buffer;	weights_buffer.clear();
 		for (int i = 0; i < quantity; i++) {
 			for (int k = 0; k < this->neurons[now_index - 1].size(); k++) {
 				weights_buffer.push_back(random());
@@ -93,7 +91,7 @@ public:
 		}
 		neurons.push_back(neurons_buffer);
 		now_index++;
-		cout << "[Fully-connected layer with size = " << quantity << " created]" << endl;
+		std::cout << "[Fully-connected layer with size = " << quantity << " created]" << std::endl;
 	}
 
 	void ClearModel() {
@@ -120,7 +118,7 @@ public:
 		for (int layer = 1; layer < neurons.size(); layer++) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
 				for (int weight = 0; weight < neurons[layer][neuron].weights.size(); weight++) {
-					cout << layer - 1 << "(" << weight << ") - " << layer << "(" << neuron << ")  =  " << neurons[layer][neuron].weights[weight] << endl;
+					std::cout << layer - 1 << "(" << weight << ") - " << layer << "(" << neuron << ")  =  " << neurons[layer][neuron].weights[weight] << std::endl;
 				}
 			}
 		}
@@ -129,15 +127,15 @@ public:
 	void ShowModel() {
 		for (int layer = 0; layer < neurons.size(); layer++) {
 			for (int neuron = 0; neuron < neurons[layer].size(); neuron++) {
-				cout << layer << "(" << neuron << ")  =  " << neurons[layer][neuron].value << endl;
+				std::cout << layer << "(" << neuron << ")  =  " << neurons[layer][neuron].value << std::endl;
 			}
-			cout << "---" << endl;
+			std::cout << "---" << std::endl;
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 
-	vector<double> predict(vector<double> inputs) {
-		vector<double> predict;	predict.clear();
+	std::vector<double> predict(std::vector<double> inputs) {
+		std::vector<double> predict;	predict.clear();
 		ClearModel();
 
 		for (int input = 0; input < neurons[0].size(); input++) {
@@ -157,12 +155,12 @@ public:
 		return predict;
 	}
 
-	void learn(vector<double> task, vector<double> target, double learning_rate, bool corrected, int batch_size) {
-		vector<double> predict = this->predict(task);
+	void learn(std::vector<double> task, std::vector<double> target, double learning_rate, bool corrected, int batch_size) {
+		std::vector<double> predict = this->predict(task);
 		if (predict.size() != target.size()) {
-			cout << "Prediction size don't equal target size!";
-			cout << "predict.size() = " << predict.size() << endl;
-			cout << "target.size() = " << target.size() << endl;
+			std::cout << "Prediction size don't equal target size!";
+			std::cout << "predict.size() = " << predict.size() << std::endl;
+			std::cout << "target.size() = " << target.size() << std::endl;
 			exit(10);
 		}
 
@@ -205,7 +203,7 @@ public:
 		if (corrected) {
 			Total_accuracy /= batch_size;
 			Total_error /= batch_size;
-			cout << "	MSE: " << Total_error << ";	Accuracy: " << Total_accuracy<< endl;
+			std::cout << "	MSE: " << Total_error << ";	Accuracy: " << Total_accuracy<< std::endl;
 			Total_errors.push_back(Total_error);
 			Total_accuracies.push_back(Total_accuracy);
 			//cout << "	>--------------------------<" << endl;
@@ -214,23 +212,23 @@ public:
 		}
 	}
 	
-	void  fit(string dataset, double learning_rate, int epochs, int batch_size) {
+	void  fit(std::string dataset, double learning_rate, int epochs, int batch_size) {
 		system("cls");
 
-		fstream file_X_train;
-		string line, word, temp;
-		vector<double> X_train;
-		vector<double> Y_train;
+		std::fstream file_X_train;
+		std::string line, word, temp;
+		std::vector<double> X_train;
+		std::vector<double> Y_train;
 
 		for (int epoch = 1; epoch <= epochs; epoch++) {
-			cout << "Epoch " << epoch << "/" << epochs << ": " << endl;
+			std::cout << "Epoch " << epoch << "/" << epochs << ": " << std::endl;
 			int train_counter = 1;
 			file_X_train.close();
-			file_X_train.open(dataset, ios::in);
+			file_X_train.open(dataset, std::ios::in);
 			while (file_X_train >> temp) {
 				train_counter++;
 				//if (train_counter == 25000) break; // Выход из эпохи обучения раньше ее окончания
-				if (train_counter % batch_size == 0) cout << "	" << train_counter << "/42000;" << endl;
+				if (train_counter % batch_size == 0) std::cout << "	" << train_counter << "/42000;" << std::endl;
 				X_train.clear();
 				Y_train.clear();
 				int Y_train_target = stoi(temp.substr(0, 1));
@@ -240,8 +238,8 @@ public:
 				}
 				temp.erase(0, 2);
 				size_t pos = 0;
-				string token;
-				while ((pos = temp.find(",")) != string::npos) {
+				std::string token;
+				while ((pos = temp.find(",")) != std::string::npos) {
 					token = temp.substr(0, pos);
 					X_train.push_back(stoi(token));
 					temp.erase(0, pos + 1);
@@ -253,14 +251,14 @@ public:
 		}
 	}
 
-	float getTotalAccuracy(string dataset, int iterations) {
-		fstream file_X_test;
-		file_X_test.open("dataset.csv", ios::in);
-		string line, word, temp;
+	float getTotalAccuracy(std::string dataset, int iterations) {
+		std::fstream file_X_test;
+		file_X_test.open("dataset.csv", std::ios::in);
+		std::string line, word, temp;
 		int test_counter = 0;
 		float true_counter = 0;
 		float false_counter = 0;
-		vector<double> X_test;
+		std::vector<double> X_test;
 
 		while (file_X_test >> temp) {
 			test_counter++;
@@ -269,8 +267,8 @@ public:
 			int Y_test = stoi(temp.substr(0, 1));
 			temp.erase(0, 2);
 			size_t pos = 0;
-			string token;
-			while ((pos = temp.find(",")) != string::npos) {
+			std::string token;
+			while ((pos = temp.find(",")) != std::string::npos) {
 				token = temp.substr(0, pos);
 				X_test.push_back(stoi(token));
 				temp.erase(0, pos + 1);
@@ -278,8 +276,8 @@ public:
 			X_test.push_back(stoi(temp));
 
 
-			vector<double> predict = this->predict(X_test);
-			vector<double> predict_chances = this->softmax(predict);
+			std::vector<double> predict = this->predict(X_test);
+			std::vector<double> predict_chances = this->softmax(predict);
 
 			int max_result = predict[0];
 			for (int i = 0; i < predict.size(); i++) {
